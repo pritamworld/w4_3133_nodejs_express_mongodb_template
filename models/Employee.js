@@ -2,16 +2,37 @@ const mongoose = require('mongoose');
 
 const EmployeeSchema = new mongoose.Schema({
   firstname: {
-    type: String
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true
   },
   lastname: {
-    type: String
+    type: String,
+    alias: 'surname',
+    required: [true, 'Last Name is required'],
+    trim: true,
+    lowercase: true
   },
   email: {
-    type: String
+    type: String,
+    required: true,
+    trim: true,
+    uppercase: true,
+    minlength: 5,
+    maxlenght: 50,
+    validate: {
+      validator: function (value) {
+        var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+        return emailRegex.test(value);
+      },
+      message: `Invalid Email address`
+    }
   },
   gender: {
-    type: String
+    type: String,
+    required: true,
+    enum: ['male', 'female', 'other']
   },
   city:{
     type: String
@@ -20,28 +41,53 @@ const EmployeeSchema = new mongoose.Schema({
     type: String
   },
   salary: {
-    type: Number
+    type: Number,
+    default: 0.0,
+    min: 0,
+    max: 1000000,
+    validate: function (value) {
+      if(value < 0){
+        throw new Error(`${value} Salary can't accept negative value`);
+      }
+    }
   },
   created: { 
-    type: Date
+    type: Date,
+    default: Date.now()
   },
   updatedat: { 
-    type: Date
+    type: Date,
+    default: Date.now()
   },
 });
 
 //Declare Virtual Fields
-
+EmployeeSchema.virtual('fullname')
+  .get(function(){
+    return `${this.firstname} ${this.lastname}`
+  })
 
 //Custom Schema Methods
 //1. Instance Method Declaration
+EmployeeSchema.methods.getFullName = function(){
+  return `${this.firstname} ${this.lastname}`
+}
 
-
+EmployeeSchema.methods.getObjectString = function(){
+  return JSON.stringify(this)
+}
 //2. Static method declararion
+EmployeeSchema.statics.getEmployeeByFirstName = function(fname){
+  return this.find({firstname: fname})
+}
 
-
+EmployeeSchema.statics.getEmployeeByLastName = function(lname){
+  return this.find({lastname: lname})
+}
 //Writing Query Helpers
-
+EmployeeSchema.query.byFirstName = function(fnm){
+  return this.where({firstname: fnm})
+}
 
 
 EmployeeSchema.pre('save', (next) => {

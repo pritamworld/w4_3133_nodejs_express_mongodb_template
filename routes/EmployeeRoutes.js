@@ -5,7 +5,7 @@ const app = express();
 //Read ALL
 //http://localhost:8081/employees
 app.get('/employees', async (req, res) => {
-  const employees = await employeeModel.find({});
+  const employees = await employeeModel.find({}).skip(7).limit(3);
   //Sorting
   //use "asc", "desc", "ascending", "descending", 1, or -1
   //const employees = await employeeModel.find({}).sort({'firstname': -1});
@@ -15,6 +15,7 @@ app.get('/employees', async (req, res) => {
   
   try {
     console.log(employees[0].surname)
+    console.log(employees[0].fullname)
     res.status(200).send(employees);
   } catch (err) {
     res.status(500).send(err);
@@ -39,13 +40,14 @@ app.get('/employee', async (req, res) => {
 //http://localhost:8081/employees/firstname/pritesh
 app.get('/employees/firstname/:name', async (req, res) => {
   const name = req.params.name
-  const employees = await employeeModel.find({firstname : name});
-  
+  const employees = await employeeModel.find({firstname : name})//.lean();
+  //console.log(employees.fullname)
   //Using Virtual Field Name
   //console.log(employees[0].fullname)
 
   //Using Instance method
   //console.log(employees[0].getFullName())
+  //console.log(employees[0].getObjectString())
 
   //Using Static method
   //const employees = await employeeModel.getEmployeeByFirstName(name)
