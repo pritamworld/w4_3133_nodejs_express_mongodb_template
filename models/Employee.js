@@ -44,7 +44,7 @@ const EmployeeSchema = new mongoose.Schema({
 
 
 
-EmployeeSchema.pre('save', (next) => {
+EmployeeSchema.pre('save', () => {
   console.log("Before Save")
   let now = Date.now()
    
@@ -53,9 +53,6 @@ EmployeeSchema.pre('save', (next) => {
   if (!this.created) {
     this.created = now
   }
-  
-  // Call the next function in the pre-save chain
-  next()
 });
 
 EmployeeSchema.pre('findOneAndUpdate', (next) => {
