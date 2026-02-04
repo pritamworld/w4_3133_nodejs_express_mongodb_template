@@ -2,25 +2,51 @@ const mongoose = require('mongoose');
 
 const EmployeeSchema = new mongoose.Schema({
   firstname: {
-    type: String
+    type: String,
+    required: [true, "First Name is required"], 
+    minlength: [5, "First Name must be at least 5 characters long"],
+    lowercase: true,
+    trim: true
   },
   lastname: {
-    type: String
+    type: String,
+    required: [true, "Last Name is required"], 
+    minlength: [5, "Last Name must be at least 5 characters long"],
+    lowercase: true,
+    trim: true
   },
   email: {
-    type: String
+    type: String,
+    required: [true, "Email is required"], 
+    lowercase: true,
+    trim: true,
+    unique: true,
+    match: [/.+\@.+\..+/, "Please fill a valid email address"]
   },
   gender: {
-    type: String
+    type: String,
+    enum: ['Male', 'Female', 'Other'],
   },
   city:{
-    type: String
+    type: String,
+    required: [true, "City is required"], 
+    lowercase: true,
+    trim: true
   },
   designation: {
-    type: String
+    type: String,
+    required: [true, "Designation is required"],
+    lowercase: true,
+    trim: true
   },
   salary: {
-    type: Number
+    type: Number,
+    min: [1000, "Salary must be at least 1,000"],
+    max: [1000000, "Salary must be at most 1,000,000"],
+    validate: {
+      validator: Number.isInteger,
+      message: '{VALUE} is not an integer value'
+    }
   },
   created: { 
     type: Date
@@ -44,7 +70,7 @@ const EmployeeSchema = new mongoose.Schema({
 
 
 
-EmployeeSchema.pre('save', (next) => {
+EmployeeSchema.pre('save', () => {
   console.log("Before Save")
   let now = Date.now()
    
@@ -55,7 +81,7 @@ EmployeeSchema.pre('save', (next) => {
   }
   
   // Call the next function in the pre-save chain
-  next()
+  // next()
 });
 
 EmployeeSchema.pre('findOneAndUpdate', (next) => {
