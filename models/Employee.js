@@ -54,6 +54,14 @@ const EmployeeSchema = new mongoose.Schema({
   updatedat: { 
     type: Date
   },
+  instance: {
+    fullname () { 
+      return this.firstname + " " + this.lastname;
+    },
+    currentYear () {
+      return new Date().getFullYear();
+    }
+  }
 });
 
 //Declare Virtual Fields
