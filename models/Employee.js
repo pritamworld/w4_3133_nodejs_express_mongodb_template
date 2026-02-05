@@ -55,12 +55,11 @@ EmployeeSchema.pre('save', () => {
   }
 });
 
-EmployeeSchema.pre('findOneAndUpdate', (next) => {
+EmployeeSchema.pre('findOneAndUpdate', () => {
   console.log("Before findOneAndUpdate")
   let now = Date.now()
   this.updatedat = now
   console.log(this.updatedat)
-  next()
 });
 
 
