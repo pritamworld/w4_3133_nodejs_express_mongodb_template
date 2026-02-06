@@ -140,6 +140,13 @@ EmployeeSchema.pre('findOneAndUpdate', () => {
   console.log(this.updatedat)
 });
 
+EmployeeSchema.pre('findOneAndDelete', () => {
+  console.log("Before findOneAndDelete")
+})
+
+EmployeeSchema.pre('findByIdAndDelete', () => {
+  console.log("Before findByIdAndDelete")
+})
 
 EmployeeSchema.post('init', (doc) => {
   console.log('%s has been initialized from the db', doc._id);

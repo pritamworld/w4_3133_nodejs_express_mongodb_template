@@ -131,13 +131,11 @@ app.get('/employees/test', async (req, res) => {
                         .limit(10)
                         .sort('-salary')
                         .select('firstname lastname salary')
-                        .exec((err, data) => {
-                          if (err){
-                              res.send(JSON.stringify({status:false, message: "No data found"}));
-                          }else{
-                              res.send(data);
-                          }
-                        });
+                        .exec().then((data) => {
+                          res.send(data)
+                        }).catch((err) => {
+                          res.status(500).send(err);
+                        })
     } catch (err) {
       res.status(500).send(err);
     }
@@ -196,7 +194,11 @@ app.patch('/employee/:id', async (req, res) => {
     console.log(req.body)
     const employee =  await employeeModel.findOneAndUpdate({ _id: req.params.id}, req.body, {new: true})
     //const employee =  await employeeModel.findByIdAndUpdate(req.params.id, req.body, {new: true})
-    res.send(employee)
+    if (!employee) {
+      res.status(404).send(JSON.stringify({status: false, message:`No item found with ID: ${req.params.id}`}))
+    }else{
+      res.send(employee)
+    }
   } catch (err) {
     res.status(500).send(err)
   }
@@ -209,8 +211,8 @@ app.delete('/employee/:id', async (req, res) => {
       const employee = await employeeModel.findByIdAndDelete(req.params.id)
 
       if (!employee) 
-      {
-        res.status(404).send(JSON.stringify({status: false, message:"No item found"}))
+      { 
+        res.status(404).send(JSON.stringify({status: false, message:`No item found with ID: ${req.params.id}`}))
       }else{
         res.status(200).send(JSON.stringify({status: true, message:"Record Deleted Successfully"}))
       }
@@ -227,7 +229,7 @@ app.get('/employee/delete', async (req, res) => {
 
     if (!employee) 
     {
-      res.status(404).send(JSON.stringify({status: false, message:"No item found"}))
+      res.status(404).send(JSON.stringify({status: false, message:`No item found with email: ${req.query.emailid}`}))
     }else{
       //employee.remove() //Update for Mongoose v5.5.3 - remove() is now deprecated
       res.status(200).send(JSON.stringify({status: true, message:"Record Deleted Successfully"}))
