@@ -17,10 +17,7 @@ const DB_CONNECTION = `mongodb+srv://${DB_USER_NAME}:${DB_PASSWORD}@cluster0.${C
 // const DB_CONNECTION = "mongodb+srv://sa:<Update your password>@cluster0.7wn4nmp.mongodb.net/db_comp3133_employee?appName=Cluster0"
 
 async function connectToMongoDB(connectionString = DB_CONNECTION) {
-  await mongoose.connect(connectionString, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
+  await mongoose.connect(connectionString);
 }
 
 app.use(employeeRouter);
