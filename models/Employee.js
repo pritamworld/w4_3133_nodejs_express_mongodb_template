@@ -58,15 +58,6 @@ const EmployeeSchema = new mongoose.Schema({
   },
 });
 
-// ---------- Document instance methods ----------
-EmployeeSchema.methods.getFullname = function () {
-  return this.firstname + " " + this.lastname;
-};
-
-EmployeeSchema.methods.getCurrentYear = function () {
-  return new Date().getFullYear();
-};
-
 //Declare Virtual Fields
 EmployeeSchema.virtual("fullname")
   .get(function () {
@@ -80,6 +71,14 @@ EmployeeSchema.virtual("fullname")
 
 //Custom Schema Methods
 //1. Instance Method Declaration
+EmployeeSchema.methods.getFullname = function () {
+  return this.firstname + " " + this.lastname;
+};
+
+EmployeeSchema.methods.getCurrentYear = function () {
+  return new Date().getFullYear();
+};
+
 EmployeeSchema.methods.isHighEarner = function (threshold = 100000) {
   return this.salary > threshold;
 };
