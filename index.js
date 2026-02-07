@@ -8,13 +8,13 @@ app.use(express.json()); // Make sure it comes back as json
 
 //TODO - Replace you Connection String here
 const DB_NAME = "db_comp3133_employee"
-const DB_USER_NAME = ''
-const DB_PASSWORD = '' //Update your password
-const CLUSTER_ID = ''
+const DB_USER_NAME = 'sa' //Update your username
+const DB_PASSWORD = 'SY1vgY0fY47tKxQL' //Update your password
+const CLUSTER_ID = '7wn4nmp' //Update your cluster id
 const DB_CONNECTION = `mongodb+srv://${DB_USER_NAME}:${DB_PASSWORD}@cluster0.${CLUSTER_ID}.mongodb.net/${DB_NAME}?retryWrites=true&w=majority&appName=Cluster0`
 
 async function connectToMongoDB(connectionString = DB_CONNECTION) {
-  await mongoose.connect(connectionString));
+  await mongoose.connect(connectionString);
 }
 
 app.use(employeeRouter);

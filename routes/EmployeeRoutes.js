@@ -3,7 +3,7 @@ const employeeModel = require('../models/Employee');
 const app = express();
 
 //Read ALL
-//http://localhost:8081/employees
+//http://localhost:3000/employees
 app.get('/employees', async (req, res) => {
   const employees = await employeeModel.find({});
   //Sorting
@@ -14,7 +14,7 @@ app.get('/employees', async (req, res) => {
   //const employees = await employeeModel.find({}).select("firstname lastname salary").sort({'salary' : 'desc'});  
   
   try {
-    console.log(employees[0].surname)
+    console.log(employees[0].fullname) //Using Virtual Field
     res.status(200).send(employees);
   } catch (err) {
     res.status(500).send(err);
@@ -22,7 +22,7 @@ app.get('/employees', async (req, res) => {
 });
 
 //Read By ID
-//http://localhost:8081/employee?id=60174acfcde1ab2e78a3a9b0
+//http://localhost:3000/employee?id=60174acfcde1ab2e78a3a9b0
 app.get('/employee', async (req, res) => {
   //const employees = await employeeModel.find({_id: req.query.id});
   //const employees = await employeeModel.findById(req.query.id);
@@ -36,22 +36,23 @@ app.get('/employee', async (req, res) => {
 });
 
 //Search By First Name - PATH Parameter
-//http://localhost:8081/employees/firstname/pritesh
+//http://localhost:3000/employees/firstname/pritesh
 app.get('/employees/firstname/:name', async (req, res) => {
   const name = req.params.name
-  const employees = await employeeModel.find({firstname : name});
+  let employees = await employeeModel.find({firstname : name});
   
   //Using Virtual Field Name
-  //console.log(employees[0].fullname)
+  console.log(employees[0].fullname)
 
   //Using Instance method
-  //console.log(employees[0].getFullName())
+  console.log(employees[0].getFullname())
 
   //Using Static method
-  //const employees = await employeeModel.getEmployeeByFirstName(name)
+  // employees = await employeeModel.findByFirstName(name)
   
   //Using Query Helper
-  //const employees = await employeeModel.findOne().byFirstName(name)
+  // employees = await employeeModel.findOne().byCity("toronto")
+  // employees = await employeeModel.find().byCity("toronto")
   
   try {
     if(employees.length != 0){
@@ -65,7 +66,7 @@ app.get('/employees/firstname/:name', async (req, res) => {
 });
 
 //Search By First Name OR Last Name
-//http://localhost:8081/employees/search?firstname=pritesh&lastname=patel
+//http://localhost:3000/employees/search?firstname=pritesh&lastname=patel
 app.get('/employees/search', async (req, res) => {
   //console.log(req.query)
   if(Object.keys(req.query).length != 2){
@@ -93,7 +94,7 @@ app.get('/employees/search', async (req, res) => {
 
 
 //Search By salary > 1000
-//http://localhost:8081/employees/salary?value=1000
+//http://localhost:3000/employees/salary?value=1000
 app.get('/employees/salary', async (req, res) => {
   //console.log(req.query)
   if(Object.keys(req.query).length != 1){
@@ -119,7 +120,7 @@ app.get('/employees/salary', async (req, res) => {
 });
 
 //Some more test queries
-//http://localhost:8081/employees/test
+//http://localhost:3000/employees/test
 app.get('/employees/test', async (req, res) => {
   try {
     const employees = employeeModel.
@@ -130,16 +131,25 @@ app.get('/employees/test', async (req, res) => {
                         .limit(10)
                         .sort('-salary')
                         .select('firstname lastname salary')
-                        .exec((err, data) => {
+                        .exec().then((data, err) => {
                           if (err){
                               res.send(JSON.stringify({status:false, message: "No data found"}));
                           }else{
                               res.send(data);
                           }
                         });
-    } catch (err) {
-      res.status(500).send(err);
-    }
+                      } catch (err) {
+                        res.status(500).send(err);
+                      }
+    //   employees.then(data => {
+    //     if(data.length != 0){
+    //       res.send(data);
+    //     }else{
+    //       res.send(JSON.stringify({status:false, message: "No data found"}))
+    //     }
+    //   }).catch(err => {
+    //     res.status(500).send(err);
+    //   })
 });
 
 //Create New Record
@@ -156,7 +166,7 @@ app.get('/employees/test', async (req, res) => {
       "salary": 10000.50
     }
 */
-//http://localhost:8081/employee
+//http://localhost:3000/employee
 app.post('/employee', async (req, res) => {
   
     console.log(req.body)
@@ -171,7 +181,7 @@ app.post('/employee', async (req, res) => {
   });
 
 //Update Record
-//http://localhost:8081/employee/60174acfcde1ab2e78a3a9b0
+//http://localhost:3000/employee/60174acfcde1ab2e78a3a9b0
 app.patch('/employee/:id', async (req, res) => {
   try {
     console.log(req.body)
@@ -184,7 +194,7 @@ app.patch('/employee/:id', async (req, res) => {
 })
 
 //Delete Record by ID
-//http://localhost:8081/employee/5d1f6c3e4b0b88fb1d257237
+//http://localhost:3000/employee/5d1f6c3e4b0b88fb1d257237
 app.delete('/employee/:id', async (req, res) => {
     try {
       const employee = await employeeModel.findByIdAndDelete(req.params.id)
@@ -201,7 +211,7 @@ app.delete('/employee/:id', async (req, res) => {
   })
 
   //Delete Record using findOneAndDelete()
-//http://localhost:8081/employee/delete?emailid=5d1f6c3e4b0b88fb1d257237
+//http://localhost:3000/employee/delete?emailid=5d1f6c3e4b0b88fb1d257237
 app.get('/employee/delete', async (req, res) => {
   try {
     const employee = await employeeModel.findOneAndDelete({email: req.query.emailid})
